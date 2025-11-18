@@ -16,7 +16,11 @@
 # Usage:
 #  sudo ./generate-ssl-subdomain.sh <subdomain> <domain> <port>
 # Example:
-#  sudo ./generate-ssl-subdomain.sh backend catastro beledev.com 83
+#  sudo ./generate-ssl-subdomain.sh backend.espg beledev.com 83
+
+# Download this script:
+#  wget https://github.com/dalthonmh/scripts/blob/main/generate-ssl-subdomain.sh
+
 
 # Variables
 SUBDOMAIN="$1"
@@ -28,7 +32,7 @@ FULL_DOMAIN="$SUBDOMAIN.$DOMAIN"
 if [ -z "$SUBDOMAIN" ] || [ -z "$DOMAIN" ] || [ -z "$PORT" ]; then
     echo "Missing parameters."
     echo "Usage: $0 <subdomain> <domain> <port>"
-    echo "Example: $0 backend.catastro beledev.com 83"
+    echo "Example: $0 backend.espg beledev.com 83"
     exit 1
 fi
 
