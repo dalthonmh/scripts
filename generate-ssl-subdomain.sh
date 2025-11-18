@@ -19,7 +19,7 @@
 #  sudo ./generate-ssl-subdomain.sh backend.espg beledev.com 83
 
 # Download this script:
-#  wget https://github.com/dalthonmh/scripts/blob/main/generate-ssl-subdomain.sh
+#  wget https://github.com/dalthonmh/scripts/blob/main/generate-ssl-subdomain.sh -O generate-ssl-subdomain.sh
 
 
 # Variables
