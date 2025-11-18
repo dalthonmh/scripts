@@ -14,14 +14,15 @@
 # Notes:
 # - The backup directory will be created if it does not exist.
 # - Retention is managed by deleting backups older than the specified number of days.
+# - Recomended path for this script: /usr/local/bin
+# - Cronjob example for daily backup at 2 AM:
+#   (crontab -l 2>/dev/null; echo "0 2 * * * /usr/local/bin/backup-etcd.sh >> /var/log/etcd-backup.log 2>&1") | crontab -
 
 # Usage:
 #   sudo ./backup-etcd.sh
 
-# usr/local/bin
 # Download this script:
-# 
-
+# wget https://raw.githubusercontent.com/dalthonmh/scripts/refs/heads/main/backup-etcd.sh
 
 
 BACKUP_DIR="/backup"
