@@ -19,7 +19,7 @@
 #   sudo ./install-https.sh example.com admin@example.com
 
 # Download this script:
-#   wget https://github.com/dalthonmh/scripts/blob/main/install-https.sh -O install-https.sh
+#   wget https://raw.githubusercontent.com/dalthonmh/scripts/refs/heads/main/install-https.sh
 
 # Parameters
 DOMAIN=${1:-'domain'}

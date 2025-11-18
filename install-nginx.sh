@@ -15,7 +15,7 @@
 #   sudo ./install-nginx.sh
 
 # Download this script:
-#   wget https://github.com/dalthonmh/scripts/blob/main/install-nginx.sh -O install-nginx.sh
+#   wget https://raw.githubusercontent.com/dalthonmh/scripts/refs/heads/main/install-nginx.sh
 
 
 echo "Installing Nginx..."

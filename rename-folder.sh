@@ -16,7 +16,7 @@
 #   ./rename-folder.sh
 
 # Download this script:
-#   wget https://github.com/dalthonmh/scripts/blob/main/rename-folder.sh -O rename-folder.sh
+#   wget https://raw.githubusercontent.com/dalthonmh/scripts/refs/heads/main/rename-folder.sh
 
 
 # Years to consider

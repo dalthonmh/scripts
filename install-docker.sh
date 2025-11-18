@@ -16,7 +16,7 @@
 #   sudo ./install-docker.sh
 
 # Download this script:
-#   wget https://github.com/dalthonmh/scripts/blob/main/install-docker.sh -O install-docker.sh
+#   wget https://raw.githubusercontent.com/dalthonmh/scripts/refs/heads/main/install-docker.sh
 
 
 echo "👉 Installing Docker"
