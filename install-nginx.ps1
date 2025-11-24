@@ -6,15 +6,12 @@
 #
 # Requirements:
 # - Run this script with PowerShell on Windows.
+# - The destination folder must not already exist.
 #
 # Notes:
 # - Adjust the parameters values as needed.
-# - The script will create the destination folder if it does not exist.
-# - Existing files in the destination may be overwritten.
 #
 # Usage:
-#   Right-click the script and select "Run with PowerShell"
-#   OR
 #   Open PowerShell, navigate to the script folder, and run:
 #     .\install-nginx.ps1
 #
@@ -29,44 +26,50 @@ $nginxZip = "$destination\nginx.zip"
 
 Write-Host "Installing nginx version $version..."
 
-if (-Not (Test-Path -Path $destination)) {
-    New-Item -Path $destination -ItemType Directory -Force
+# Strict validation
+if (Test-Path -Path $destination) {
+    Write-Host "Error: destination folder already exists. Aborting."
+    exit
 }
 
-Invoke-WebRequest -Uri $nginxUrl -OutFile $nginxZip
+$tempRoot = "$env:TEMP\nginx_install_temp"
+if (Test-Path $tempRoot) { Remove-Item $tempRoot -Recurse -Force }
+New-Item -Path $tempRoot -ItemType Directory -Force | Out-Null
 
-# Extract file in destination path
-$tempPath = "$destination\temp"
-Expand-Archive -Path $nginxZip -DestinationPath $tempPath -Force
+$zipPath = "$tempRoot\nginx.zip"
 
-$nginxFolder = Get-ChildItem -Path $tempPath | Where-Object { $_.PSIsContainer } | Select-Object -First 1
-
-if ($nginxFolder) {
-    # Move files with overwrite
-    Get-ChildItem -Path "$($nginxFolder.FullName)\*" -Recurse | ForEach-Object {
-        $targetPath = $_.FullName.Replace($nginxFolder.FullName, $destination)
-
-        if ($_.PSIsContainer) {
-            # Create file if not exists
-            if (-Not (Test-Path -Path $targetPath)) {
-                New-Item -Path $targetPath -ItemType Directory -Force | Out-Null
-            }
-        } else {
-            Copy-Item -Path $_.FullName -Destination $targetPath -Force
-        }
-    }
-
-    Remove-Item -Path $nginxFolder.FullName -Recurse -Force
+Write-Host "Downloading..."
+try {
+    Invoke-WebRequest -Uri $nginxUrl -OutFile $zipPath -ErrorAction Stop
+}
+catch {
+    Write-Host "Download failed."
+    Remove-Item $tempRoot -Recurse -Force
+    exit
 }
 
-Remove-Item -Path $tempPath -Recurse -Force
-Remove-Item -Path $nginxZip -Force
+# Extract
+Write-Host "Extracting..."
+Expand-Archive -Path $zipPath -DestinationPath $tempRoot -Force
 
-# Create version file
-$versionFile = "$destination\version-$version.txt"
-if (Test-Path -Path $versionFile) {
-    Remove-Item -Path $versionFile -Force
+$extractedFolder = Get-ChildItem -Path $tempRoot | Where-Object { $_.PSIsContainer } | Select-Object -First 1
+if (-not $extractedFolder) {
+    Write-Host "Extraction error."
+    exit
 }
-New-Item -Path $versionFile -ItemType "File" -Value "nginx $version" | Out-Null
 
+# Installation
+Write-Host "Installing..."
+New-Item -Path $destination -ItemType Directory -Force | Out-Null
+
+Get-ChildItem -Path $extractedFolder.FullName -Recurse | Move-Item -Destination {
+    $relativePath = $_.FullName.Substring($extractedFolder.FullName.Length)
+    $targetPath = "$destination$relativePath"
+    if ($_.PSIsContainer) { New-Item -ItemType Directory -Path $targetPath -Force | Out-Null }
+    return $targetPath
+} -Force
+
+# Cleaning
+Remove-Item -Path $tempRoot -Recurse -Force
+Set-Content -Path "$destination\version-$version.txt" -Value "Installed on $(Get-Date)"
 Write-Host "Nginx $version installed in $destination"
